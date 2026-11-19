@@ -1,0 +1,204 @@
+@import 'tailwindcss';
+@import '@fontsource/plus-jakarta-sans/latin-400.css';
+@import '@fontsource/plus-jakarta-sans/latin-500.css';
+@import '@fontsource/plus-jakarta-sans/latin-600.css';
+@import '@fontsource/plus-jakarta-sans/latin-700.css';
+@import '@fontsource/plus-jakarta-sans/latin-800.css';
+@import '@fontsource/geist-mono/latin-400.css';
+@import '@fontsource/geist-mono/latin-500.css';
+
+/* Registered so the whole UI can glide between profile colours. */
+@property --brand {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #111318;
+}
+@property --brand-soft {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f1f1f1;
+}
+@property --brand-text {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #111318;
+}
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-paper: #f4f3ef;
+  --color-ink: #111318;
+  --color-ink-2: #4a4f5b;
+  --color-muted: #8b909b;
+  --color-line: #e4e2dc;
+  --color-line-strong: #d3d0c8;
+  --color-ok: #13773a;
+  --color-warn: #a75a06;
+  --color-danger: #c42b2b;
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@theme inline {
+  --color-brand: var(--brand);
+  --color-on-brand: var(--on-brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-text: var(--brand-text);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+    font-feature-settings: 'ss01' on;
+  }
+  .brand-scope {
+    transition:
+      --brand 480ms var(--ease-out-quart),
+      --brand-soft 480ms var(--ease-out-quart),
+      --brand-text 480ms var(--ease-out-quart);
+  }
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .field {
+    @apply block w-full rounded-xl border border-line bg-white px-3.5 text-[16px] text-ink placeholder:text-muted/80 sm:text-[15px];
+    min-height: 46px;
+    transition:
+      border-color 150ms,
+      box-shadow 150ms;
+  }
+  textarea.field {
+    @apply py-3 leading-snug;
+    resize: vertical;
+  }
+  .field:hover {
+    @apply border-line-strong;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 14%, transparent);
+  }
+  .field[aria-invalid='true'] {
+    border-color: var(--color-danger);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-danger) 12%, transparent);
+  }
+  .card {
+    @apply rounded-[20px] border border-line/80 bg-white;
+    box-shadow:
+      0 1px 0 rgba(17, 19, 24, 0.02),
+      0 8px 24px -16px rgba(17, 19, 24, 0.12);
+  }
+  .eyebrow {
+    @apply text-[11px] font-bold tracking-[0.14em] text-muted uppercase;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .pb-safe {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes sheet-left {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes shimmer {
+  from {
+    background-position: -400px 0;
+  }
+  to {
+    background-position: 400px 0;
+  }
+}
+
+.animate-rise {
+  animation: rise 420ms var(--ease-out-expo) both;
+}
+.animate-fade {
+  animation: fade 220ms ease-out both;
+}
+.sheet-panel {
+  animation: sheet-up 380ms var(--ease-out-expo) both;
+}
+@media (min-width: 768px) {
+  .sheet-panel {
+    animation-name: sheet-left;
+  }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f1f0ec 0, #f8f7f4 40%, #f1f0ec 80%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
