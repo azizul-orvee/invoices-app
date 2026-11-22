@@ -2,6 +2,12 @@
 
 Why things are the way they are. Newest first.
 
+## 2026-11-22 — Phones lead with Share, never with a download
+**Context:** The client sent a "link" to an invoice that showed Vercel's 404. On phones, a download opens the PDF at `blob:https://<site>/<random id>`, which only exists in that tab for about a minute. People copy that address and send it on. The phone bar's main button was Download.
+**Decision:** Where the browser can share files and the layout is the phone one (`shareFirst = canShareFiles && !isDesktop`), Share is the primary button everywhere (action bar, Preview sheet, History rows); Download stays as a secondary button in the Preview sheet. If `navigator.share` fails with `NotAllowedError` (the tap "expired" while the PDF was rendering), show a "Your PDF is ready → Share" toast rather than falling back to a download. Unknown addresses get a static `public/404.html` that explains this.
+**Alternatives considered:** Real shareable invoice links (needs online storage, against the no-backend decision; would need the owner's go-ahead). An SPA rewrite in `vercel.json` with an in-app "not found" screen (host-specific config and a route in a no-routes app; `404.html` works on Vercel, Netlify and Cloudflare Pages as-is).
+**Consequences:** Desktop behaviour is unchanged. `vite preview` doesn't serve `404.html` for unknown paths, so check it on the real host.
+
 ## 2026-11-19 — Line items printed excluding VAT, rounding favours "qty × unit = amount"
 **Context:** The user types VAT-inclusive prices ("20% of whatever price I give is VAT"). The old invoice showed gross line prices next to a "Taxable" row, which reads awkwardly.
 **Decision:** The PDF shows unit price and amount excluding VAT, then Subtotal (excl. VAT), VAT (20%), Total (incl. VAT). Per line: unit net is rounded first, line net = qty × unit net, VAT = line gross − line net. The total always equals exactly what was typed.

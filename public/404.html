@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#F4F3EF" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>This link doesn’t open an invoice · Invoice Studio</title>
+    <!--
+      Served by the static host (Vercel, Netlify, Cloudflare Pages) for any address that isn't a real file.
+      The usual visitor arrived from a copied blob: address: on phones a downloaded PDF opens at
+      blob:https://<site>/<random id>, which only exists on that device for a minute.
+      Self-contained on purpose: no app bundle, no web fonts.
+    -->
+    <style>
+      :root {
+        --paper: #f4f3ef;
+        --ink: #111318;
+        --ink-2: #4a4f5b;
+        --muted: #8b909b;
+        --line: #e4e2dc;
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        background: var(--paper);
+        color: var(--ink);
+        font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 16px calc(32px + env(safe-area-inset-bottom));
+      }
+      main { width: 100%; max-width: 480px; }
+      .mark {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        background: var(--ink);
+        color: #fff;
+        margin-bottom: 20px;
+      }
+      h1 {
+        margin: 0 0 10px;
+        font-size: 28px;
+        line-height: 1.12;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+      .lead { margin: 0 0 24px; color: var(--ink-2); }
+      .card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px 20px;
+        margin-bottom: 12px;
+      }
+      h2 { margin: 0 0 6px; font-size: 15px; font-weight: 700; }
+      .card p { margin: 0; color: var(--ink-2); font-size: 15px; }
+      ol { margin: 0; padding-left: 20px; color: var(--ink-2); font-size: 15px; }
+      li + li { margin-top: 4px; }
+      strong { color: var(--ink); font-weight: 600; }
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        margin-top: 20px;
+        border-radius: 14px;
+        background: var(--ink);
+        color: #fff;
+        font-weight: 600;
+        font-size: 15px;
+        text-decoration: none;
+      }
+      .btn:hover { background: #262a33; }
+      .foot { margin: 14px 0 0; text-align: center; font-size: 13px; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <span class="mark" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
+          <path d="M14 8H8" />
+          <path d="M16 12H8" />
+          <path d="M13 16H8" />
+        </svg>
+      </span>
+      <h1>This link doesn’t open an invoice</h1>
+      <p class="lead">Invoices aren’t stored online, so there’s nothing at this address. It was probably copied from the browser after a PDF was downloaded, and that kind of link only works on the device that made it, for about a minute.</p>
+
+      <section class="card">
+        <h2>Someone sent you this link?</h2>
+        <p>Ask them to send the invoice as a <strong>PDF file</strong> instead, by WhatsApp or email.</p>
+      </section>
+
+      <section class="card">
+        <h2>You made the invoice?</h2>
+        <ol>
+          <li>Open Invoice Studio on the phone or computer you made it on.</li>
+          <li>Tap <strong>History</strong> (the clock icon at the top) and find the invoice.</li>
+          <li>Tap <strong>Share</strong> (or <strong>PDF</strong> on a computer) and send the file itself.</li>
+        </ol>
+      </section>
+
+      <a class="btn" href="/">Open Invoice Studio</a>
+      <p class="foot">Error 404 · page not found</p>
+    </main>
+  </body>
+</html>

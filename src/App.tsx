@@ -266,20 +266,44 @@ export default function App() {
     }
   };
 
+  /**
+   * Opens the share sheet with the PDF file itself (WhatsApp, email, Save to Files…).
+   * If making the PDF took long enough that the browser no longer counts it as a tap, it offers a
+   * one-tap retry instead of falling back to a download: on iPhones a download opens the PDF at a
+   * temporary blob: address, and people copy that address and send a link nobody else can open.
+   */
+  const sharePdf = async (
+    blob: Blob,
+    name: string,
+    title: string,
+    onDone?: (verb: 'shared' | 'downloaded') => void,
+    retry = true,
+  ): Promise<void> => {
+    const file = new File([blob], name, { type: 'application/pdf' });
+    try {
+      await navigator.share({ files: [file], title });
+      onDone?.('shared');
+    } catch (err) {
+      const reason = err instanceof DOMException ? err.name : '';
+      if (reason === 'AbortError') return; // closed the share sheet
+      if (reason === 'NotAllowedError' && retry) {
+        notify({ message: 'Your PDF is ready.', action: { label: 'Share', run: () => void sharePdf(blob, name, title, onDone, false) } });
+        return;
+      }
+      saveFile(blob, name);
+      onDone?.('downloaded');
+    }
+  };
+
   const share = async () => {
     if (working || !validate()) return;
     setWorking('share');
     try {
       const blob = await getBlob(invoice, profile);
-      const file = new File([blob], fileName, { type: 'application/pdf' });
-      try {
-        await navigator.share({ files: [file], title: `Invoice ${invoice.number}` });
-        afterExport('shared', record(invoice));
-      } catch (err) {
-        if (err instanceof DOMException && err.name === 'AbortError') return;
-        saveFile(blob, fileName);
-        afterExport('downloaded', record(invoice));
-      }
+      await sharePdf(blob, fileName, `Invoice ${invoice.number}`, (verb) => afterExport(verb, record(invoice)));
+    } catch (e) {
+      console.error(e);
+      notify({ message: 'Could not create the PDF. Please try again.', tone: 'error' });
     } finally {
       setWorking(null);
     }
@@ -383,6 +407,18 @@ export default function App() {
     saveFile(await renderInvoicePdf(prof, h), fileNameFor(prof, h));
   };
 
+  const shareFromHistory = async (h: Invoice) => {
+    const prof = profiles.find((p) => p.id === h.profileId);
+    if (!prof) return;
+    try {
+      const { renderInvoicePdf } = await loadGenerator();
+      await sharePdf(await renderInvoicePdf(prof, h), fileNameFor(prof, h), `Invoice ${h.number}`);
+    } catch (e) {
+      console.error(e);
+      notify({ message: 'Could not create the PDF. Please try again.', tone: 'error' });
+    }
+  };
+
   const deleteFromHistory = (id: string) => {
     const next = history.filter((h) => h.id !== id);
     setHistory(next);
@@ -398,20 +434,36 @@ export default function App() {
     '--brand-text': readableOnWhite(brand),
   } as CSSProperties;
 
-  const actionButtons = (size: 'md' | 'lg', stretch = false) => (
-    <>
-      {canShareFiles ? (
-        <Button size={size} onClick={share} disabled={Boolean(working)} className={cx(stretch && 'flex-1')}>
-          {working === 'share' ? <Loader2 size={18} className="animate-spin" /> : <Share2 size={18} />}
-          Share
-        </Button>
-      ) : null}
-      <Button size={size} variant="primary" onClick={download} disabled={Boolean(working)} className={cx(stretch ? 'flex-[1.4]' : 'flex-1')}>
-        {working === 'download' ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
-        Download PDF
+  // Phones lead with Share: it sends the PDF file itself. A phone download opens the PDF at a temporary
+  // blob: address that only works on that device, and people send that address on as a "link".
+  const shareFirst = canShareFiles && !isDesktop;
+
+  const actionButtons = (size: 'md' | 'lg', stretch = false) => {
+    const width = (primary: boolean) => cx(primary ? (stretch ? 'flex-[1.4]' : 'flex-1') : stretch && 'flex-1');
+    const shareBtn = (primary: boolean) => (
+      <Button size={size} variant={primary ? 'primary' : 'secondary'} onClick={share} disabled={Boolean(working)} className={width(primary)}>
+        {working === 'share' ? <Loader2 size={18} className="animate-spin" /> : <Share2 size={18} />}
+        Share
       </Button>
-    </>
-  );
+    );
+    const downloadBtn = (primary: boolean) => (
+      <Button size={size} variant={primary ? 'primary' : 'secondary'} onClick={download} disabled={Boolean(working)} className={width(primary)}>
+        {working === 'download' ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+        {primary ? 'Download PDF' : 'Download'}
+      </Button>
+    );
+    return shareFirst ? (
+      <>
+        {downloadBtn(false)}
+        {shareBtn(true)}
+      </>
+    ) : (
+      <>
+        {canShareFiles ? shareBtn(false) : null}
+        {downloadBtn(true)}
+      </>
+    );
+  };
 
   return (
     <div className="brand-scope min-h-dvh" style={themeVars}>
@@ -518,14 +570,22 @@ export default function App() {
                 {formatMoney(invoice.status === 'paid' ? totals.total : totals.balance)}
               </p>
             </div>
-            <Button size="lg" onClick={() => setPreviewOpen(true)} aria-label="Preview PDF">
+            {/* Tighter padding, and an icon-only Preview on the narrowest phones, keep the total on one line. */}
+            <Button size="lg" onClick={() => setPreviewOpen(true)} aria-label="Preview PDF" className="px-4!">
               <Eye size={18} />
-              <span className="max-[370px]:hidden">Preview</span>
+              <span className="max-[380px]:hidden">Preview</span>
             </Button>
-            <Button size="lg" variant="primary" onClick={download} disabled={Boolean(working)}>
-              {working === 'download' ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
-              PDF
-            </Button>
+            {canShareFiles ? (
+              <Button size="lg" variant="primary" onClick={share} disabled={Boolean(working)} className="px-4!">
+                {working === 'share' ? <Loader2 size={18} className="animate-spin" /> : <Share2 size={18} />}
+                Share
+              </Button>
+            ) : (
+              <Button size="lg" variant="primary" onClick={download} disabled={Boolean(working)}>
+                {working === 'download' ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+                PDF
+              </Button>
+            )}
           </div>
         </div>
       ) : null}
@@ -572,6 +632,7 @@ export default function App() {
         onOpen={openFromHistory}
         onDuplicate={duplicateFromHistory}
         onDownload={downloadFromHistory}
+        onShare={shareFirst ? shareFromHistory : undefined}
         onDelete={deleteFromHistory}
       />
 

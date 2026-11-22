@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { Copy, Download, FileText, PencilLine, Search, Trash2 } from 'lucide-react';
+import { Copy, Download, FileText, PencilLine, Search, Share2, Trash2 } from 'lucide-react';
 import type { Invoice, Profile } from '../types';
 import { calcTotals, formatMoney } from '../lib/money';
 import { formatDate } from '../lib/dates';
@@ -20,6 +20,7 @@ export function HistorySheet({
   onOpen,
   onDuplicate,
   onDownload,
+  onShare,
   onDelete,
 }: {
   open: boolean;
@@ -29,6 +30,8 @@ export function HistorySheet({
   onOpen: (inv: Invoice) => void;
   onDuplicate: (inv: Invoice) => void;
   onDownload: (inv: Invoice) => void;
+  /** Given on phones that can share files: the PDF button becomes Share. */
+  onShare?: (inv: Invoice) => void;
   onDelete: (id: string) => void;
 }) {
   const [q, setQ] = useState('');
@@ -121,26 +124,33 @@ export function HistorySheet({
                     </span>
                   </div>
                 </div>
-                <div className="mt-3 flex flex-wrap gap-1.5 border-t border-line pt-3">
-                  <RowBtn onClick={() => onDownload(h)} disabled={!p}>
-                    <Download size={15} /> PDF
-                  </RowBtn>
+                <div className="mt-3 flex flex-wrap gap-1 border-t border-line pt-3">
+                  {onShare ? (
+                    <RowBtn onClick={() => onShare(h)} disabled={!p}>
+                      <Share2 size={15} /> Share
+                    </RowBtn>
+                  ) : (
+                    <RowBtn onClick={() => onDownload(h)} disabled={!p}>
+                      <Download size={15} /> PDF
+                    </RowBtn>
+                  )}
                   <RowBtn onClick={() => onOpen(h)} disabled={!p}>
                     <PencilLine size={15} /> Open
                   </RowBtn>
                   <RowBtn onClick={() => onDuplicate(h)} disabled={!p}>
                     <Copy size={15} /> Duplicate
                   </RowBtn>
-                  <div className="flex-1" />
-                  <RowBtn
-                    danger
-                    onClick={() => {
-                      if (window.confirm(`Remove ${h.number} from history? This can’t be undone.`)) onDelete(h.id);
-                    }}
-                  >
-                    <Trash2 size={15} />
-                    <span className="sr-only">Delete</span>
-                  </RowBtn>
+                  <div className="ml-auto">
+                    <RowBtn
+                      danger
+                      onClick={() => {
+                        if (window.confirm(`Remove ${h.number} from history? This can’t be undone.`)) onDelete(h.id);
+                      }}
+                    >
+                      <Trash2 size={15} />
+                      <span className="sr-only">Delete</span>
+                    </RowBtn>
+                  </div>
                 </div>
               </li>
             );
@@ -168,7 +178,7 @@ function RowBtn({
       onClick={onClick}
       disabled={disabled}
       className={cx(
-        'inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-lg px-2.5 text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40',
+        'inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-lg px-2 text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40',
         danger ? 'text-muted hover:bg-danger/8 hover:text-danger' : 'text-ink-2 hover:bg-black/5 hover:text-ink',
       )}
     >

@@ -6,6 +6,7 @@ Single-page, client-only React app. No routes, no server. Everything persists in
 ```
 index.html                 ← app shell, mobile meta tags
 public/
+├── 404.html               ← self-contained "this link doesn't open an invoice" page; static hosts serve it for unknown paths
 ├── favicon.svg
 └── logos/creations-mobile-tyres.png   ← seeded logo (extracted from the old invoice PDF)
 src/
@@ -31,7 +32,7 @@ src/
     ├── InvoiceForm.tsx    ← invoice header strip, Customer, Work & price (line items), Payment sections
     ├── ProfileSwitcher.tsx← horizontal chips to pick the business
     ├── ProfilesSheet.tsx  ← profile list, profile editor, backup export/import
-    ├── HistorySheet.tsx   ← saved invoices: search, filter, re-download, open, duplicate, delete
+    ├── HistorySheet.tsx   ← saved invoices: search, filter, re-download (Share on phones), open, duplicate, delete
     └── PdfPreview.tsx     ← lazy-loads pdf.js, draws each PDF page to a canvas
 ```
 
@@ -39,8 +40,9 @@ src/
 | Surface | File | Purpose |
 |---|---|---|
 | Main page | `src/App.tsx` + `InvoiceForm.tsx` | Pick profile, fill invoice; desktop shows sticky live preview on the right |
-| Phone action bar | `src/App.tsx` | Fixed bottom: total, Preview, PDF download |
-| Preview sheet (phone) | `src/App.tsx` | Full PDF preview + Share / Download |
+| Phone action bar | `src/App.tsx` | Fixed bottom: total, Preview, **Share** (PDF download on phones that can't share files) |
+| Preview sheet (phone) | `src/App.tsx` | Full PDF preview + Download (secondary) / Share (primary) |
+| Not-found page | `public/404.html` | Static page for unknown addresses, e.g. a copied `blob:` link |
 | Profiles sheet | `ProfilesSheet.tsx` | Create/edit/duplicate/delete business profiles; backup |
 | History sheet | `HistorySheet.tsx` | Every downloaded/shared invoice |
 
@@ -64,7 +66,7 @@ Per line, in pence: `unitNet = round(unitGross / 1.2)`, `net = round(qty × unit
 ## Integrations
 | Service | Where in code | Notes |
 |---|---|---|
-| Web Share API | `App.tsx` `share()` | Only shown when the browser can share files (phones); falls back to download |
+| Web Share API | `App.tsx` `sharePdf()` / `share()` / `shareFromHistory()` | Only shown when the browser can share files; the main action on phones (`shareFirst`). If the tap "expired" while the PDF was being made (`NotAllowedError`), a toast offers a one-tap retry; other share errors fall back to download |
 
 ## Key modules
 - `src/pdf/InvoiceDocument.tsx` — the premium invoice layout. Header (title + meta, logo or monogram), From / Bill to / Vehicle plate, statement panel with status pill, line-item table (header repeats on new pages), payment + totals with brand-coloured balance box, terms, fixed footer with legal line + page x of y.

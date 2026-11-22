@@ -20,7 +20,7 @@ A browser-only invoice maker for the owner's UK mobile-tyre businesses (Creation
 - **Stack:** Vite 8 + React 19 + TypeScript, Tailwind CSS 4, @react-pdf/renderer 4 (PDF), pdfjs-dist 6 (on-screen preview)
 - **Run locally:** `npm install` then `npm run dev` (http://localhost:5173)
 - **Build:** `npm run build` → static files in `dist/`
-- **Deploy:** any static host (Netlify, Vercel, Cloudflare Pages). TODO: confirm with user where it will be hosted.
+- **Deploy:** any static host (Netlify, Vercel, Cloudflare Pages). A live copy is on Vercel at https://invoices-app-plum.vercel.app (owner and auto-deploy unconfirmed; see `docs/ai/PROJECT.md`).
 - **Package manager:** npm
 - **No backend, no database.** All data (profiles, history, draft) lives in the browser's `localStorage`.
 

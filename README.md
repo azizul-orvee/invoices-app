@@ -16,7 +16,7 @@ Open http://localhost:5173. On the same Wi-Fi you can open it on your phone usin
 1. **Pick the business** at the top (Creations is set up already). Tap **New profile** to add Emergency Tyre Rescue or any other business: logo, brand colour, address, VAT number, bank details, quick items.
 2. **Fill in the customer** and the **work & price**. Prices you type **include 20% VAT** — the invoice works out the net and VAT for you.
 3. Choose **Paid / Unpaid / Part paid**.
-4. Tap **Download PDF** (or **Share** on a phone to send it straight to WhatsApp, email, etc).
+4. On a phone, tap **Share** to send the PDF straight to WhatsApp, email, etc. On a computer, tap **Download PDF**. Always send the PDF file itself: the app doesn't make invoice links, and an address copied from the browser after a download won't open for anyone else.
 
 Every downloaded invoice is kept in **History** to re-download, open or duplicate.
 
