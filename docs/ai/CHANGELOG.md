@@ -2,6 +2,16 @@
 
 All changes to this project, newest first. Every AI tool and human must add an entry here after each change.
 
+## 2026-11-22 — Share fix deployed to Vercel
+**Type:** deploy
+**Tool:** Claude Code
+**What changed:**
+- Pushed commit `a47531b` to GitHub `main`. Vercel rebuilt by itself and https://invoices-app-plum.vercel.app was serving it within about a minute.
+- Checked live: the home page loads the same build as local (`assets/index-DwVr49on.js`); `/404.html` returns 200; the client's dead link `/7046808e-1bea-43ec-bf17-1db6c7a9a835` now returns 404 with the "This link doesn't open an invoice" page.
+- `docs/ai/STATUS.md`, `docs/ai/PROJECT.md`, `AGENTS.md`: pushing to `main` deploys automatically (confirmed).
+**Why:** User asked to commit and push the Share fix to live.
+**Notes / gotchas:** Still not tested on a real phone. Who owns the Vercel project is unconfirmed (probably the client).
+
 ## 2026-11-22 — Phones lead with Share; friendly page for dead links
 **Type:** fix
 **Tool:** Claude Code

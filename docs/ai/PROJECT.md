@@ -21,7 +21,7 @@ Internal tool for the owner of UK mobile-tyre businesses:
 | Icons | `lucide-react` |
 | Database / ORM | None — browser `localStorage` |
 | Auth | None |
-| Hosting | Static. A live copy is on Vercel at https://invoices-app-plum.vercel.app (owner and GitHub auto-deploy unconfirmed; not linked from this folder) |
+| Hosting | Static, on Vercel at https://invoices-app-plum.vercel.app. Pushing to GitHub `main` deploys automatically (owner unconfirmed; not linked from this folder) |
 
 ## Getting started
 ```bash
@@ -45,4 +45,4 @@ Any static host. Build command `npm run build`, publish directory `dist`. No ser
 
 ## External accounts / dashboards
 - **GitHub repo:** https://github.com/azizul-orvee/invoices-app (default branch `main`)
-- **Vercel (live site):** https://invoices-app-plum.vercel.app (found 2026-11-22; probably set up by the client)
+- **Vercel (live site):** https://invoices-app-plum.vercel.app (found 2026-11-22; probably set up by the client; deploys on every push to `main`)
